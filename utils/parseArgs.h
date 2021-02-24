@@ -15,9 +15,11 @@ struct Args
     std::vector<std::string> time_series_filename;
     vec3i dims;
     std::string dtype;
+    std::string vtype;
     std::string view_file;
     std::string opacity_file;
     std::string color_file;
+    int n_samples;
 };
 
 std::string getFileExt(const std::string& s);

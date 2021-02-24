@@ -81,10 +81,11 @@ TransferFunctionWidget::vec2f::operator ImVec2() const
 TransferFunctionWidget::TransferFunctionWidget()
 {
     // Load up the embedded colormaps as the default options
+    load_embedded_preset(rainbow, sizeof(rainbow), "Rainbow");
     load_embedded_preset(jet, sizeof(jet), "Jet");
     // std::cout << "size of jet: " << sizeof(jet) << std::endl;
     load_embedded_preset(paraview_cool_warm, sizeof(paraview_cool_warm), "ParaView Cool Warm");
-    load_embedded_preset(rainbow, sizeof(rainbow), "Rainbow");
+    
     load_embedded_preset(matplotlib_plasma, sizeof(matplotlib_plasma), "Matplotlib Plasma");
     load_embedded_preset(matplotlib_virdis, sizeof(matplotlib_virdis), "Matplotlib Virdis");
     load_embedded_preset(

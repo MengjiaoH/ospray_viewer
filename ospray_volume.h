@@ -18,6 +18,19 @@ ospray::cpp::Volume createStructuredVolume(const Volume volume)
 
   auto voxels = *(volume.voxel_data);
 // vec3f(-volume.dims.x/ 2.f, -volume.dims.y/2.f, -volume.dims.z/2.f)
+  osp_volume.setParam("gridOrigin", vec3f(-volume.dims.x/ 2.f, -volume.dims.y/2.f, -volume.dims.z/2.f));
+  osp_volume.setParam("gridSpacing", vec3f(1.f));
+  osp_volume.setParam("data", ospray::cpp::CopiedData(voxels.data(), volume.dims));
+  osp_volume.commit();
+  return osp_volume;
+}
+
+ospray::cpp::Volume createSphericalVolume(const Volume volume)
+{
+  ospray::cpp::Volume osp_volume("structuredSpherical");
+
+  auto voxels = *(volume.voxel_data);
+// vec3f(-volume.dims.x/ 2.f, -volume.dims.y/2.f, -volume.dims.z/2.f)
   osp_volume.setParam("gridOrigin", vec3f(0.f));
   osp_volume.setParam("gridSpacing", vec3f(1.f));
   osp_volume.setParam("data", ospray::cpp::CopiedData(voxels.data(), volume.dims));
@@ -78,7 +91,7 @@ ospray::cpp::TransferFunction makeTransferFunction(const std::vector<uint8_t> co
 
     return transferFunction;
 }
-
+// 
 ospray::cpp::TransferFunction loadTransferFunction(std::vector<float> colors, std::vector<float> opacities, const vec2f &valueRange)
 {
     ospray::cpp::TransferFunction transferFunction("piecewiseLinear");
@@ -88,6 +101,29 @@ ospray::cpp::TransferFunction loadTransferFunction(std::vector<float> colors, st
         vec3f c (colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2]);
         vec_colors.push_back(c);
     }
+
+    transferFunction.setParam("color", ospray::cpp::CopiedData(vec_colors));
+    transferFunction.setParam("opacity", ospray::cpp::CopiedData(opacities));
+    transferFunction.setParam("valueRange", valueRange);
+    transferFunction.commit();
+
+    return transferFunction;
+}
+
+ospray::cpp::TransferFunction loadTransferFunctionWithColormap(const std::vector<uint8_t> colormap, std::vector<float> opacities, const vec2f &valueRange)
+{
+    ospray::cpp::TransferFunction transferFunction("piecewiseLinear");
+    std::vector<vec3f> vec_colors;
+    
+    // for(size_t i = 0; i < colors.size()/3; i++){
+    //     vec3f c (colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2]);
+    //     vec_colors.push_back(c);
+    // }
+    for (size_t i = 0; i < colormap.size() / 4; ++i) {
+        vec3f c(colormap[i * 4] / 255.f, colormap[i * 4 + 1] / 255.f, colormap[i * 4 + 2] / 255.f);
+        vec_colors.push_back(c);
+    }
+
     transferFunction.setParam("color", ospray::cpp::CopiedData(vec_colors));
     transferFunction.setParam("opacity", ospray::cpp::CopiedData(opacities));
     transferFunction.setParam("valueRange", valueRange);

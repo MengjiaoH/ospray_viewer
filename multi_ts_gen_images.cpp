@@ -71,8 +71,9 @@ int main(int argc, const char **argv)
         for(dirent *e = readdir(dp); e; e = readdir(dp)){
             std::string name = e ->d_name;
             if(name.length() > 3){
-                // std::cout << "name: " << name << std::endl;
-                const int timestep = std::stoi(name.substr(19, name.find(".") - 19));
+                // std::cout << "name: " << name << " " << name.substr(11, 4) <<  std::endl;
+                // 10, name.find(".") - 19
+                const int timestep = std::stoi(name.substr(11, 15));
                 const std::string filename = dir + "/" + name;
                 // std::cout << filename << " " << timestep << std::endl;
                 timesteps t(timestep, filename);
@@ -103,12 +104,15 @@ int main(int argc, const char **argv)
 
     // image size
     vec2i imgSize;
-    imgSize.x = 1024; // width
-    imgSize.y = 1024; // height
+    imgSize.x = 512; // width
+    imgSize.y = 512; // height
 
     box3f worldBound = box3f(-volumes[0].dims / 2 * volumes[0].spacing, volumes[0].dims / 2 * volumes[0].spacing);
     // std::vector<vec2f> ranges;
     vec2f range = vec2f{-1, 1};
+    const int num = args.n_samples;
+    std::vector<Camera> cameras = gen_cameras(num, worldBound);
+    std::cout << "camera pos:" << cameras.size() << std::endl;
 
     // vec2f range = volumes[0].range; 
 
@@ -175,7 +179,7 @@ int main(int argc, const char **argv)
         ospray::cpp::Renderer renderer("scivis");
 
         //! Complete Setup of Renderer
-        renderer.setParam("aoSamples", 10);
+        renderer.setParam("aoSamples", 1);
         renderer.setParam("shadows", true);
         renderer.setParam("pixelSamples", 10);
         renderer.setParam("backgroundColor", vec4f(1.f)); // white, transparent
@@ -183,30 +187,29 @@ int main(int argc, const char **argv)
         renderer.commit();
 
         //! Transfer function
-        // auto colormap = transferFcnWidget.get_colormap();
+        auto colormap = transferFcnWidget.get_colormap();
 // volumes.size()
         for(int v = 0; v < volumes.size(); v++){
             std::cout << "volume: " << v << std::endl;
             // params.size()
-            for(int p0 = 0; p0 < params.size() ; p0++){
+            for(int p0 = 0; p0 < cameras.size() ; p0++){
                 // for (int p1 = 0; p1 < params.size(); p1++){
                     std::cout << " p0: " << p0 << std::endl;
                     //! Create and Setup Camera
-                    Camera c = gen_cameras_from_vtk(params[p0], volumes[v]);
+                    // Camera c = gen_cameras_from_vtk(params[p0], volumes[v]);
                     ospray::cpp::Camera camera("perspective");
                     camera.setParam("aspect", imgSize.x / (float)imgSize.y);
-                    camera.setParam("position", c.pos);
-                    camera.setParam("direction", c.dir);
-                    camera.setParam("up", c.up);
-                    camera.setParam("fovy", c.fovy);
+                    camera.setParam("position", cameras[p0].pos);
+                    camera.setParam("direction", cameras[p0].dir);
+                    camera.setParam("up", cameras[p0].up);
+                    // camera.setParam("fovy", c.fovy);
                     camera.commit(); // commit each object to indicate modifications are done
 
-                    std::vector<float> opacities = params[11].opacity_tf;
+                    std::vector<float> opacities = params[9].opacity_tf;
                     std::vector<float> colors = params[0].color_tf;
                     
 
-                    ospray::cpp::TransferFunction transfer_function = loadTransferFunction(colors, opacities, range);
-                    //! Volume
+                    ospray::cpp::TransferFunction transfer_function = loadTransferFunctionWithColormap(colormap, opacities, range);
                     ospray::cpp::Volume osp_volume = createStructuredVolume(volumes[v]);
                     //! Volume Model
                     ospray::cpp::VolumetricModel volume_model(osp_volume);
@@ -234,7 +237,7 @@ int main(int argc, const char **argv)
                         framebuffer.renderFrame(renderer, camera, world);
                     }
                     uint32_t *fb = (uint32_t *)framebuffer.map(OSP_FB_COLOR);
-                    std::string filename = "predefined_tf/volume_" + std::to_string(v) + "_view_" + std::to_string(p0) + "_tf_2.png";
+                    std::string filename = "/home/mengjiao/Desktop/data/images/2008/volume_" + std::to_string(v) + "_view_" + std::to_string(p0) + "_tf_0.png";
                     stbi_write_png(filename.c_str(), imgSize.x, imgSize.y, 4, fb, imgSize.x * 4);
                     framebuffer.unmap(fb);
 

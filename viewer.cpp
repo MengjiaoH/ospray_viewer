@@ -151,8 +151,14 @@ int main(int argc, const char **argv)
         //! Transfer function
         auto colormap = transferFcnWidget.get_colormap();
 		ospray::cpp::TransferFunction transfer_function = makeTransferFunction(colormap, range);
+        // ospray::cpp::Volume osp_volume = createSphericalVolume(volume);
+        // }else{
 		//! Volume
-		ospray::cpp::Volume osp_volume = createStructuredVolume(volume);
+        // if(args.vtype == "spherical"){
+            
+        ospray::cpp::Volume osp_volume = createStructuredVolume(volume);
+        // }
+		
 		//! Volume Model
 		ospray::cpp::VolumetricModel volume_model(osp_volume);
 		volume_model.setParam("transferFunction", transfer_function);
@@ -202,7 +208,7 @@ int main(int argc, const char **argv)
         ospray::cpp::Renderer renderer("scivis");
 
         //! Complete Setup of Renderer
-        renderer.setParam("aoSamples", 5);
+        renderer.setParam("aoSamples", 1);
         renderer.setParam("shadows", true);
         renderer.setParam("backgroundColor", 1.f); // white, transparent
         //renderer.setParam("pixelFilter", "gaussian");

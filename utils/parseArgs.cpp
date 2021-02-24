@@ -24,6 +24,10 @@ void parseArgs(int argc, const char **argv, Args &args)
             args.dims.z = std::stoi(argv[++i]);
         }else if(arg == "-dtype"){
             args.dtype = argv[++i];
+        }else if(arg == "-vtype"){
+            args.vtype = argv[++i];
+        }else if(arg == "-n_samples"){
+            args.n_samples = std::stoi(argv[++i]);
         }else if(arg == "-opacity"){
             args.opacity_file = argv[++i];
         }else if(arg == "-color"){

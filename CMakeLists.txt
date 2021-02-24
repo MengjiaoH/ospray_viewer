@@ -22,7 +22,7 @@ find_package(rkcommon REQUIRED)
 find_package(ospray REQUIRED)
 
 ## find vtk-m
-find_package(VTKm REQUIRED QUIET)
+#find_package(VTKm REQUIRED QUIET)
 
 ## find vtk
 find_package(VTK REQUIRED)
@@ -60,23 +60,37 @@ target_link_libraries(multi_ts_gen_images glfw
                                           util
                                           rkcommon::rkcommon
                                           ospray::ospray
-                                          ${VTK_LIBRARIES})
+                                          ${VTK_LIBRARIES}
+                                          )
 
-target_include_directories(multi_ts_gen_images PRIVATE ${VTKm_INCLUDE_DIRS})
-
-add_executable(unstructed_viewer testUnstructured.cpp)
-set_target_properties(unstructed_viewer PROPERTIES 
+add_executable(single_ts_gen_images single_ts_gen_images.cpp)
+set_target_properties(single_ts_gen_images PROPERTIES 
                                     CXX_STANDARD 11
                                     CXX_STANDARD_REQUIRED ON)
 
-target_include_directories(unstructed_viewer PRIVATE ${VTKm_INCLUDE_DIRS})
-target_link_libraries(unstructed_viewer glfw 
-                                    gl3w 
-                                    imgui
-                                    util
-                                    rkcommon::rkcommon
-                                    ospray::ospray
-                                    vtkm_cont 
-                                    vtkm_io
-                                    ${VTKm_LIBRARIES}
-                                    ${VTK_LIBRARIES})
+target_link_libraries(single_ts_gen_images glfw 
+                                        gl3w 
+                                        imgui
+                                        util
+                                        rkcommon::rkcommon
+                                        ospray::ospray
+                                        ${VTK_LIBRARIES}
+                                        )
+#target_include_directories(multi_ts_gen_images PRIVATE ${VTKm_INCLUDE_DIRS})
+
+# add_executable(unstructed_viewer testUnstructured.cpp)
+# set_target_properties(unstructed_viewer PROPERTIES 
+#                                     CXX_STANDARD 11
+#                                     CXX_STANDARD_REQUIRED ON)
+
+# target_include_directories(unstructed_viewer PRIVATE ${VTKm_INCLUDE_DIRS})
+# target_link_libraries(unstructed_viewer glfw 
+#                                     gl3w 
+#                                     imgui
+#                                     util
+#                                     rkcommon::rkcommon
+#                                     ospray::ospray
+#                                     #vtkm_cont 
+#                                     #vtkm_io
+#                                     #${VTKm_LIBRARIES}
+#                                     ${VTK_LIBRARIES})

@@ -1,0 +1,1 @@
+./multi_ts_gen_images -dims 600 248 248 -dtype float32 -view ~/Desktop/data/meta_data/view.txt -color ~/Desktop/data/meta_data/color.txt -opacity ~/Desktop/data/meta_data/opacity.txt -n_samples 200 -multi-ts /media/mengjiao/0EE2C5F5E2C5E157/data/2008/data_files/raw/HE/
