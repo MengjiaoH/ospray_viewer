@@ -81,6 +81,7 @@ TransferFunctionWidget::vec2f::operator ImVec2() const
 TransferFunctionWidget::TransferFunctionWidget()
 {
     // Load up the embedded colormaps as the default options
+    load_embedded_preset(ice_fire, sizeof(ice_fire), "Ice Fire");
     load_embedded_preset(rainbow, sizeof(rainbow), "Rainbow");
     load_embedded_preset(jet, sizeof(jet), "Jet");
     // std::cout << "size of jet: " << sizeof(jet) << std::endl;
@@ -95,7 +96,7 @@ TransferFunctionWidget::TransferFunctionWidget()
     load_embedded_preset(cool_warm_extended, sizeof(cool_warm_extended), "Cool Warm Extended");
     load_embedded_preset(blackbody, sizeof(blackbody), "Black Body");
     load_embedded_preset(blue_gold, sizeof(blue_gold), "Blue Gold");
-    load_embedded_preset(ice_fire, sizeof(ice_fire), "Ice Fire");
+    
     load_embedded_preset(nic_edge, sizeof(nic_edge), "nic Edge");
 
     // Initialize the colormap alpha channel w/ a linear ramp

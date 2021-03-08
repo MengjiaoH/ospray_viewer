@@ -21,6 +21,7 @@ struct Args
     std::string color_file;
     std::string write_camera_to;
     int n_samples;
+    std::string write_camera_to;
 };
 
 std::string getFileExt(const std::string& s);

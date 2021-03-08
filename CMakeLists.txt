@@ -94,3 +94,31 @@ target_link_libraries(single_ts_gen_images glfw
 #                                     #vtkm_io
 #                                     #${VTKm_LIBRARIES}
 #                                     ${VTK_LIBRARIES})
+
+add_executable(random_spheres random_spheres.cpp)
+set_target_properties(random_spheres PROPERTIES 
+                                    CXX_STANDARD 11
+                                    CXX_STANDARD_REQUIRED ON)
+
+target_link_libraries(random_spheres glfw 
+                                        gl3w 
+                                        imgui
+                                        util
+                                        rkcommon::rkcommon
+                                        ospray::ospray
+                                        ${VTK_LIBRARIES}
+                                        )
+                        
+add_executable(isosurfaces isosurfaces.cpp)
+set_target_properties(isosurfaces PROPERTIES 
+                                    CXX_STANDARD 11
+                                    CXX_STANDARD_REQUIRED ON)
+
+target_link_libraries(isosurfaces glfw 
+                                        gl3w 
+                                        imgui
+                                        util
+                                        rkcommon::rkcommon
+                                        ospray::ospray
+                                        ${VTK_LIBRARIES}
+                                        )
