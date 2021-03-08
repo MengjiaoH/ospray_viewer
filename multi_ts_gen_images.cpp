@@ -233,15 +233,12 @@ int main(int argc, const char **argv)
         auto colormap = transferFcnWidget.get_colormap();
 // volumes.size()
         for(int v = 0; v < volumes.size(); v++){
-<<<<<<< HEAD
-            std::cout << "volume: " << v << std::endl;
+            // std::cout << "volume: " << v << std::endl;
             // cameras.size()
-            for(int p0 = 0; p0 < params.size() ; p0++){
-=======
             std::cout << "volume: " << volumes[v].timestep << std::endl;
+            for(int p0 = 0; p0 < params.size() ; p0++){
             // params.size()
-            for(int p0 = 0; p0 < cameras.size() ; p0++){
->>>>>>> 110be4a8bb24e8bc30df0897aa61025fae59f0d2
+            // for(int p0 = 0; p0 < cameras.size() ; p0++){
                 // for (int p1 = 0; p1 < params.size(); p1++){
                     std::cout << " p0: " << p0 << std::endl;
                     //! Create and Setup Camera
