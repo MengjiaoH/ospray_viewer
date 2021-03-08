@@ -106,11 +106,13 @@ std::vector<Camera> gen_cameras(const int num, const box3f &world_bounds){
     std::srand((unsigned)time(NULL));
     // int part = num / 500 ;
     int part = num;
+    float minimun = 0.8;
+    float diff = 1 - minimun;
     for (int i = 0; i < part; i++){
-        float scale = ((float) rand()/RAND_MAX);
+        float scale = ((float) rand()/RAND_MAX) * diff + minimun;
         // float scale = 0.9;
         const float orbit_radius = length(world_bounds.size()) * scale;
-        std::cout << "orbit radius: " << orbit_radius << std::endl;
+        std::cout << "orbit radius: " << scale << " " << orbit_radius << std::endl;
         auto orbit_points = generate_fibonacci_sphere(10, orbit_radius);
         // std::cout << "points " << orbit_points.size() << "\n";
         for (const auto &p : orbit_points) {

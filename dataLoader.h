@@ -15,6 +15,7 @@ struct Volume {
     vec2f range;
     vec3f spacing{1.f};
     vec3f origin{0.f};
+    int timestep;
     std::shared_ptr<std::vector<float>> voxel_data = nullptr;
 
     size_t n_voxels() const
@@ -84,7 +85,7 @@ Volume load_raw_volume(const std::string &fname,
     float old_range = volume.range.y - volume.range.x;
     float new_range = 2.f;
 
-    // float b = 1.f / (volume.range.y - volume.range.x) * 255.f;
+    float b = 1.f / (volume.range.y - volume.range.x) * 255.f;
     std::vector<float> &voxels = *volume.voxel_data;
     for(int i = 0; i < volume.n_voxels(); ++i){
         float a = (((voxels[i] - volume.range.x) * new_range) / old_range) + -1.f;

@@ -26,7 +26,9 @@ void parseArgs(int argc, const char **argv, Args &args)
             args.dtype = argv[++i];
         }else if(arg == "-vtype"){
             args.vtype = argv[++i];
-        }else if(arg == "-n_samples"){
+        }else if(arg == "-write_camera_to"){
+	    args.write_camera_to = argv[++i];	
+	}else if(arg == "-n_samples"){
             args.n_samples = std::stoi(argv[++i]);
         }else if(arg == "-opacity"){
             args.opacity_file = argv[++i];

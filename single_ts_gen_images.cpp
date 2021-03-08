@@ -67,11 +67,29 @@ int main(int argc, const char **argv)
     imgSize.x = 512; // width
     imgSize.y = 512; // height
 
-    box3f worldBound = box3f(-volume.dims / 2 * volume.spacing, volume.dims / 2 * volume.spacing);;
+    box3f worldBound = box3f(-volume.dims / 2 * volume.spacing, volume.dims / 2 * volume.spacing);
+    std::cout << "world bounds size: " << length(worldBound.size()) << "\n";
     vec2f range = vec2f{-1, 1};
     const int num = args.n_samples;
     std::vector<Camera> cameras = gen_cameras(num, worldBound);
     std::cout << "camera pos:" << cameras.size() << std::endl;
+
+    std::ofstream outfile;
+    // save camera to file
+    outfile.open("/home/mengjiao/Desktop/projects/ospray_viewer/channel_flow_camera.txt");
+    for(int i = 0; i < cameras.size(); i++){
+        outfile << cameras[i].pos.x << " " <<
+                   cameras[i].pos.y << " " <<
+                   cameras[i].pos.z << " " <<
+                   cameras[i].dir.x << " " <<
+                   cameras[i].dir.y << " " <<
+                   cameras[i].dir.z << " " <<
+                   cameras[i].up.x  << " " <<
+                   cameras[i].up.y  << " " <<
+                   cameras[i].up.z  << "\n";
+    }
+    outfile.close();
+
 
     ArcballCamera arcballCamera(worldBound, imgSize);
     TransferFunctionWidget transferFcnWidget;
@@ -136,7 +154,7 @@ int main(int argc, const char **argv)
         world.commit();
         
         auto colormap = transferFcnWidget.get_colormap();
-        // for(int m = 0; m < params.size(); m++){ // loop transfer function
+        for(int m = 0; m < params.size(); m++){ // loop transfer function
             for (int c = 0; c < cameras.size(); c++){
                 // Camera c = gen_cameras_from_vtk(params[m], volume); // c.pos
                 ospray::cpp::Camera camera("perspective");
@@ -146,7 +164,7 @@ int main(int argc, const char **argv)
                 camera.setParam("up", cameras[c].up);
                 // camera.setParam("fovy", c.fovy);
                 camera.commit(); // commit each object to indicate modifications are done
-                std::vector<float> opacities = params[9].opacity_tf;
+                std::vector<float> opacities = params[m].opacity_tf;
                 // std::vector<float> colors = params[m].color_tf;
 
                 ospray::cpp::TransferFunction transfer_function = loadTransferFunctionWithColormap(colormap, opacities, range);
@@ -162,10 +180,10 @@ int main(int argc, const char **argv)
                     framebuffer.renderFrame(renderer, camera, world);
                 }
                 uint32_t *fb = (uint32_t *)framebuffer.map(OSP_FB_COLOR);
-                std::string filename = "/home/mengjiao/Desktop/data/images/2008/meta_" + std::to_string(9) + "_view_" + std::to_string(c) + ".png";
+                std::string filename = "/home/mengjiao/Desktop/data/images/channel_flow/meta_" + std::to_string(m) + "_view_" + std::to_string(c) + ".png";
                 stbi_write_png(filename.c_str(), imgSize.x, imgSize.y, 4, fb, imgSize.x * 4);
                 framebuffer.unmap(fb);
             }
-        // }
+        }
     }
 }
