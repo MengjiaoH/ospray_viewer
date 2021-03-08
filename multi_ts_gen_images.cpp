@@ -87,7 +87,7 @@ int main(int argc, const char **argv)
     // std::cout << "debug" << std::endl;
 
     // load volumes 
-    int count = 100;
+    int count = 1;
     std::vector<Volume> volumes;
     for(auto f : files){
         if(f.timeStep <= count){
@@ -111,25 +111,25 @@ int main(int argc, const char **argv)
     box3f worldBound = box3f(-volumes[0].dims / 2 * volumes[0].spacing, volumes[0].dims / 2 * volumes[0].spacing);
     // std::vector<vec2f> ranges;
     vec2f range = vec2f{-1, 1};
-    const int num = args.n_samples;
-    std::vector<Camera> cameras = gen_cameras(num, worldBound);
-    std::cout << "camera pos:" << cameras.size() << std::endl;
+    // const int num = args.n_samples;
+    // std::vector<Camera> cameras = gen_cameras(num, worldBound);
+    // std::cout << "camera pos:" << cameras.size() << std::endl;
 
-    std::ofstream outfile;
-    // save camera to file
-    outfile.open("/home/mengjiao/Desktop/projects/ospray_viewer/channel_flow_camera.txt");
-    for(int i = 0; i < cameras.size(); i++){
-        outfile << cameras[i].pos.x << " " <<
-                   cameras[i].pos.y << " " <<
-                   cameras[i].pos.z << " " <<
-                   cameras[i].dir.x << " " <<
-                   cameras[i].dir.y << " " <<
-                   cameras[i].dir.z << " " <<
-                   cameras[i].up.x  << " " <<
-                   cameras[i].up.y  << " " <<
-                   cameras[i].up.z  << "\n";
-    }
-    outfile.close();
+    // std::ofstream outfile;
+    // // save camera to file
+    // outfile.open("/home/mengjiao/Desktop/projects/ospray_viewer/channel_flow_camera.txt");
+    // for(int i = 0; i < cameras.size(); i++){
+    //     outfile << cameras[i].pos.x << " " <<
+    //                cameras[i].pos.y << " " <<
+    //                cameras[i].pos.z << " " <<
+    //                cameras[i].dir.x << " " <<
+    //                cameras[i].dir.y << " " <<
+    //                cameras[i].dir.z << " " <<
+    //                cameras[i].up.x  << " " <<
+    //                cameras[i].up.y  << " " <<
+    //                cameras[i].up.z  << "\n";
+    // }
+    // outfile.close();
 
     // vec2f range = volumes[0].range; 
 
@@ -164,6 +164,7 @@ int main(int argc, const char **argv)
     std::unique_ptr<ParamReader> p_reader(new ParamReader(args.view_file, args.opacity_file, args.color_file));
     std::cout << p_reader->params.size() << std::endl;
     std::vector<VolParam> params = p_reader->params;
+    std::cout << "view size: " << params[0].view_param.size() << std::endl;
     // std::cout << "opacity size: " << params[0].opacity_tf.size() << std::endl;
     // std::cout << "color size: " << params[0].color_tf.size() << std::endl;
 
@@ -208,18 +209,20 @@ int main(int argc, const char **argv)
 // volumes.size()
         for(int v = 0; v < volumes.size(); v++){
             std::cout << "volume: " << v << std::endl;
-            // params.size()
-            for(int p0 = 0; p0 < cameras.size() ; p0++){
+            // cameras.size()
+            for(int p0 = 0; p0 < params.size() ; p0++){
                 // for (int p1 = 0; p1 < params.size(); p1++){
                     std::cout << " p0: " << p0 << std::endl;
                     //! Create and Setup Camera
                     // Camera c = gen_cameras_from_vtk(params[p0], volumes[v]);
+                    Camera c = gen_camera_from_txt(params[p0]);
                     ospray::cpp::Camera camera("perspective");
                     camera.setParam("aspect", imgSize.x / (float)imgSize.y);
-                    camera.setParam("position", cameras[p0].pos);
-                    camera.setParam("direction", cameras[p0].dir);
-                    camera.setParam("up", cameras[p0].up);
+                    camera.setParam("position", c.pos);
+                    camera.setParam("direction", c.dir);
+                    camera.setParam("up", c.up);
                     // camera.setParam("fovy", c.fovy);
+                    // cameras[p0]
                     camera.commit(); // commit each object to indicate modifications are done
 
                     std::vector<float> opacities = params[4].opacity_tf;

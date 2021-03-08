@@ -83,6 +83,15 @@ Camera gen_cameras_from_vtk(VolParam param, Volume volume)
     return camera;
 }
 
+Camera gen_camera_from_txt(VolParam param)
+{   
+    vec3f cam_pos = vec3f(param.view_param[0], param.view_param[1], param.view_param[2]);
+    vec3f cam_dir = vec3f(param.view_param[3], param.view_param[4], param.view_param[5]);
+    vec3f cam_up = vec3f(param.view_param[6], param.view_param[7], param.view_param[8]);
+    Camera camera = Camera(cam_pos, cam_dir, cam_up);
+    return camera;
+}
+
 std::vector<vec3f> generate_fibonacci_sphere(const size_t n_points, const float radius)
 {
     const float increment = M_PI * (3.f - std::sqrt(5.f));
