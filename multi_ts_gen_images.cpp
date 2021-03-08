@@ -60,22 +60,24 @@ int main(int argc, const char **argv)
     //! Read Arguments
     Args args;
     parseArgs(argc, argv, args);
-
+    std::cout << "start" << std::endl;
     // load raw data
     std::vector<timesteps> files;
     for(const auto &dir : args.time_series_filename){
+        std::cout << "here" << std::endl;
         DIR *dp = opendir(dir.c_str());
         if (!dp) {
             throw std::runtime_error("failed to open directory: " + dir);
         }
+        std::cout << "debug0" <<std::endl;
         for(dirent *e = readdir(dp); e; e = readdir(dp)){
             std::string name = e ->d_name;
             if(name.length() > 3){
-                // std::cout << "name: " << name << " " << name.substr(11, 4) <<  std::endl;
+                std::cout << "name: " << name << " " << name.substr(11, 4) <<  std::endl;
                 // 10, name.find(".") - 19
                 const int timestep = std::stoi(name.substr(11, 15));
                 const std::string filename = dir + "/" + name;
-                // std::cout << filename << " " << timestep << std::endl;
+                std::cout << filename << " " << timestep << std::endl;
                 timesteps t(timestep, filename);
                 files.push_back(t);
             }
@@ -91,7 +93,9 @@ int main(int argc, const char **argv)
     for(auto f : files){
         if(f.timeStep <= count){
             std::cout << "f.timestep: " << f.timeStep << std::endl;
-            volumes.push_back(load_raw_volume(f.fileDir, args.dims, args.dtype));
+            Volume volume = load_raw_volume(f.fileDir, args.dims, args.dtype);
+            volume.ts = f.timeStep;
+            volumes.push_back(volume);
         }else{
             break;
         }
@@ -104,8 +108,8 @@ int main(int argc, const char **argv)
 
     // image size
     vec2i imgSize;
-    imgSize.x = 512; // width
-    imgSize.y = 512; // height
+    imgSize.x = 1024; // width
+    imgSize.y = 1024; // height
 
     box3f worldBound = box3f(-volumes[0].dims / 2 * volumes[0].spacing, volumes[0].dims / 2 * volumes[0].spacing);
     // std::vector<vec2f> ranges;
@@ -113,6 +117,25 @@ int main(int argc, const char **argv)
     const int num = args.n_samples;
     std::vector<Camera> cameras = gen_cameras(num, worldBound);
     std::cout << "camera pos:" << cameras.size() << std::endl;
+    
+    std::ofstream outfile;
+
+    // save camera to file"/home/sci/mengjiao/Desktop/projects/ospray_viewer/input3.txt")
+    outfile.open(args.write_camera_to);
+    std::cout << "debug1" << std::endl;
+    for(int i = 0; i < cameras.size(); i++){
+        outfile << cameras[i].pos.x << " " <<
+        cameras[i].pos.y << " " <<
+        cameras[i].pos.z << " " <<
+        cameras[i].dir.x << " " <<
+        cameras[i].dir.y << " " <<
+        cameras[i].dir.z << " " <<                                                                                                                                   
+        cameras[i].up.x  << " " <<
+        cameras[i].up.y  << " " <<
+        cameras[i].up.z  << "\n";
+    }
+    outfile.close();
+    
 
     // vec2f range = volumes[0].range; 
 
@@ -190,7 +213,7 @@ int main(int argc, const char **argv)
         auto colormap = transferFcnWidget.get_colormap();
 // volumes.size()
         for(int v = 0; v < volumes.size(); v++){
-            std::cout << "volume: " << v << std::endl;
+            std::cout << "volume: " << volumes[v].ts << std::endl;
             // params.size()
             for(int p0 = 0; p0 < cameras.size() ; p0++){
                 // for (int p1 = 0; p1 < params.size(); p1++){
@@ -205,8 +228,8 @@ int main(int argc, const char **argv)
                     // camera.setParam("fovy", c.fovy);
                     camera.commit(); // commit each object to indicate modifications are done
 
-                    std::vector<float> opacities = params[9].opacity_tf;
-                    std::vector<float> colors = params[0].color_tf;
+                    std::vector<float> opacities = params[33].opacity_tf;
+                    //std::vector<float> colors = params[0].color_tf;
                     
 
                     ospray::cpp::TransferFunction transfer_function = loadTransferFunctionWithColormap(colormap, opacities, range);
@@ -237,7 +260,7 @@ int main(int argc, const char **argv)
                         framebuffer.renderFrame(renderer, camera, world);
                     }
                     uint32_t *fb = (uint32_t *)framebuffer.map(OSP_FB_COLOR);
-                    std::string filename = "/home/mengjiao/Desktop/data/images/2008/volume_" + std::to_string(v) + "_view_" + std::to_string(p0) + "_tf_0.png";
+                    std::string filename = "/home/sci/mengjiao/Desktop/data/images/2008/volume_" + std::to_string(volumes[v].ts) + "_view_" + std::to_string(p0) + "_tf_0.png";
                     stbi_write_png(filename.c_str(), imgSize.x, imgSize.y, 4, fb, imgSize.x * 4);
                     framebuffer.unmap(fb);
 

@@ -72,7 +72,22 @@ int main(int argc, const char **argv)
     const int num = args.n_samples;
     std::vector<Camera> cameras = gen_cameras(num, worldBound);
     std::cout << "camera pos:" << cameras.size() << std::endl;
-
+    std::ofstream outfile;
+    // save camera to file
+    outfile.open("/home/mengjiao/Desktop/projects/ospray_viewer/input.txt");
+    for(int i = 0; i < cameras.size(); i++){
+        outfile << cameras[i].pos.x << " " <<
+        cameras[i].pos.y << " " <<
+        cameras[i].pos.z << " " <<
+        cameras[i].dir.x << " " <<
+        cameras[i].dir.y << " " <<
+        cameras[i].dir.z << " " <<                                                                                                                                   
+        cameras[i].up.x  << " " <<
+        cameras[i].up.y  << " " <<
+        cameras[i].up.z  << "\n";
+    }
+    outfile.close();
+    
     ArcballCamera arcballCamera(worldBound, imgSize);
     TransferFunctionWidget transferFcnWidget;
 
@@ -146,7 +161,7 @@ int main(int argc, const char **argv)
                 camera.setParam("up", cameras[c].up);
                 // camera.setParam("fovy", c.fovy);
                 camera.commit(); // commit each object to indicate modifications are done
-                std::vector<float> opacities = params[9].opacity_tf;
+                std::vector<float> opacities = params[33].opacity_tf;
                 // std::vector<float> colors = params[m].color_tf;
 
                 ospray::cpp::TransferFunction transfer_function = loadTransferFunctionWithColormap(colormap, opacities, range);
@@ -162,7 +177,7 @@ int main(int argc, const char **argv)
                     framebuffer.renderFrame(renderer, camera, world);
                 }
                 uint32_t *fb = (uint32_t *)framebuffer.map(OSP_FB_COLOR);
-                std::string filename = "/home/mengjiao/Desktop/data/images/2008/meta_" + std::to_string(9) + "_view_" + std::to_string(c) + ".png";
+                std::string filename = "/home/sci/mengjiao/Desktop/data/images/2008/meta_" + std::to_string(33) + "_view_" + std::to_string(c) + ".png";
                 stbi_write_png(filename.c_str(), imgSize.x, imgSize.y, 4, fb, imgSize.x * 4);
                 framebuffer.unmap(fb);
             }

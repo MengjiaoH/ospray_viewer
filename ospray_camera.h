@@ -106,8 +106,10 @@ std::vector<Camera> gen_cameras(const int num, const box3f &world_bounds){
     std::srand((unsigned)time(NULL));
     // int part = num / 500 ;
     int part = num;
+    float minimum = 0.4;
+    float diff = 0.9 - minimum;
     for (int i = 0; i < part; i++){
-        float scale = ((float) rand()/RAND_MAX);
+        float scale = ((float) rand()/RAND_MAX) * diff + minimum;
         // float scale = 0.9;
         const float orbit_radius = length(world_bounds.size()) * scale;
         std::cout << "orbit radius: " << orbit_radius << std::endl;
