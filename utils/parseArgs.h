@@ -19,7 +19,6 @@ struct Args
     std::string view_file;
     std::string opacity_file;
     std::string color_file;
-    std::string write_camera_to;
     int n_samples;
     std::string write_camera_to;
 };

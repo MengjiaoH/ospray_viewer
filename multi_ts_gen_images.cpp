@@ -95,7 +95,7 @@ int main(int argc, const char **argv)
         if(f.timeStep <= count){
             std::cout << "f.timestep: " << f.timeStep << std::endl;
             Volume volume = load_raw_volume(f.fileDir, args.dims, args.dtype);
-            volume.ts = f.timeStep;
+            volume.timestep = f.timeStep;
             volumes.push_back(volume);
         }else{
             break;
@@ -119,25 +119,6 @@ int main(int argc, const char **argv)
     std::vector<Camera> cameras = gen_cameras(num, worldBound);
     std::cout << "camera pos:" << cameras.size() << std::endl;
     
-    std::ofstream outfile;
-
-    // save camera to file"/home/sci/mengjiao/Desktop/projects/ospray_viewer/input3.txt")
-    outfile.open(args.write_camera_to);
-    std::cout << "debug1" << std::endl;
-    for(int i = 0; i < cameras.size(); i++){
-        outfile << cameras[i].pos.x << " " <<
-        cameras[i].pos.y << " " <<
-        cameras[i].pos.z << " " <<
-        cameras[i].dir.x << " " <<
-        cameras[i].dir.y << " " <<
-        cameras[i].dir.z << " " <<                                                                                                                                   
-        cameras[i].up.x  << " " <<
-        cameras[i].up.y  << " " <<
-        cameras[i].up.z  << "\n";
-    }
-    outfile.close();
-    
-
     std::ofstream outfile;
     // save camera to file
     outfile.open("/home/mengjiao/Desktop/projects/ospray_viewer/channel_flow_camera.txt");
@@ -230,7 +211,7 @@ int main(int argc, const char **argv)
         auto colormap = transferFcnWidget.get_colormap();
 // volumes.size()
         for(int v = 0; v < volumes.size(); v++){
-            std::cout << "volume: " << volumes[v].ts << std::endl;
+            std::cout << "volume: " << volumes[v].timestep << std::endl;
             // params.size()
             for(int p0 = 0; p0 < cameras.size() ; p0++){
                 // for (int p1 = 0; p1 < params.size(); p1++){
@@ -245,13 +226,9 @@ int main(int argc, const char **argv)
                     // camera.setParam("fovy", c.fovy);
                     camera.commit(); // commit each object to indicate modifications are done
 
-<<<<<<< HEAD
-                    std::vector<float> opacities = params[33].opacity_tf;
                     //std::vector<float> colors = params[0].color_tf;
-=======
                     std::vector<float> opacities = params[4].opacity_tf;
                     // std::vector<float> colors = params[0].color_tf;
->>>>>>> ee07419cf11ec0dce9dc3fe19851b4001a077e30
                     
 
                     ospray::cpp::TransferFunction transfer_function = loadTransferFunctionWithColormap(colormap, opacities, range);
@@ -282,11 +259,8 @@ int main(int argc, const char **argv)
                         framebuffer.renderFrame(renderer, camera, world);
                     }
                     uint32_t *fb = (uint32_t *)framebuffer.map(OSP_FB_COLOR);
-<<<<<<< HEAD
-                    std::string filename = "/home/sci/mengjiao/Desktop/data/images/2008/volume_" + std::to_string(volumes[v].ts) + "_view_" + std::to_string(p0) + "_tf_0.png";
-=======
-                    std::string filename = "/home/mengjiao/Desktop/data/images/channel_flow/volume_" + std::to_string(v) + "_view_" + std::to_string(p0) + "_tf_0.png";
->>>>>>> ee07419cf11ec0dce9dc3fe19851b4001a077e30
+                    std::string filename = "/home/sci/mengjiao/Desktop/data/images/channel_flow/volume_" + std::to_string(volumes[v].timestep) + "_view_" + std::to_string(p0) + "_tf_0.png";
+                    //std::string filename = "/home/mengjiao/Desktop/data/images/channel_flow/volume_" + std::to_string(v) + "_view_" + std::to_string(p0) + "_tf_0.png";
                     stbi_write_png(filename.c_str(), imgSize.x, imgSize.y, 4, fb, imgSize.x * 4);
                     framebuffer.unmap(fb);
 
