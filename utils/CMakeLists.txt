@@ -1,6 +1,7 @@
 
 # add_library(transferFunction TransferFunction/widgets/TransferFunctionWidget.cpp)
 # target_link_libraries(transferFunction imgui)
+find_package(glm REQUIRED)
 #find_package(glm REQUIRED)
 
 add_library(util
@@ -27,6 +28,7 @@ target_link_libraries(util PUBLIC
 	glfw
 	imgui
 	gl3w
+	glm
 	#glm
 	rkcommon::rkcommon
 	${OPENGL_LIBRARIES}

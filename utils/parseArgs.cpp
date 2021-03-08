@@ -1,14 +1,14 @@
 #include "parseArgs.h"
 
-std::string getFileExt(const std::string& s) 
+std::string getFileExt(const std::string& s)
 {
 
-   size_t i = s.rfind('.', s.length());
-   if (i != std::string::npos) {
-      return(s.substr(i+1, s.length() - i));
-   }
+       size_t i = s.rfind('.', s.length());
+          if (i != std::string::npos) {
+                    return(s.substr(i+1, s.length() - i));
+                       }
 
-   return("");
+             return("");
 }
 
 void parseArgs(int argc, const char **argv, Args &args)
